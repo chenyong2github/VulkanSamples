@@ -423,6 +423,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             break;
         case WM_PAINT:
             run(info);
+			ValidateRect(info->window, NULL);
             return 0;
         default:
             break;

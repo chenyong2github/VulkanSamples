@@ -261,7 +261,8 @@ set (S_TARGETS
     copy_blit_image template separate_image_sampler input_attachment
     occlusion_query pipeline_cache pipeline_derivative push_descriptors
     immutable_sampler push_constants draw_subpasses secondary_command_buffer
-    spirv_assembly spirv_specialization memory_barriers validation_cache vulkan_1_1_flexible)
+    spirv_assembly spirv_specialization memory_barriers validation_cache vulkan_1_1_flexible
+	Y01-draw_cube_ext)
 sampleWithSingleFile()
 
 if (NOT ANDROID)
