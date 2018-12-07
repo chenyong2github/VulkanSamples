@@ -990,37 +990,3 @@ FILE *AndroidFopen(const char *fname, const char *mode) {
     return funopen(asset, android_read, android_write, android_seek, android_close);
 }
 #endif
-
-
-void RenderLoop(struct sample_info &info, void (*pRenderFunc)(struct sample_info &info))
-{
-#if defined(_WIN32)
-	MSG msg;
-	bool quitMessageReceived = false;
-	while (!quitMessageReceived) {
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			if (msg.message == WM_QUIT) {
-				quitMessageReceived = true;
-				break;
-			}
-			else
-			{
-				if (!IsIconic(info.window)) {
-					pRenderFunc(info);
-				}
-			}
-		}
-	}
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-#elif defined(_DIRECT2DISPLAY)
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-#endif
-
-	// Flush device to make sure all resources can be freed
-	if (info.device != VK_NULL_HANDLE) {
-		vkDeviceWaitIdle(info.device);
-	}
-}

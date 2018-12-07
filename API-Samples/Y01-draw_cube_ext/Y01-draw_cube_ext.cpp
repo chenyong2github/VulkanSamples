@@ -69,7 +69,7 @@ int sample_main(int argc, char *argv[]) {
 	process_command_line_args(info, argc, argv);
 
 	Init(info);
-	RenderLoop(info, Render);
+	RenderLoop(info);
 	Destroy(info);
 
     return 0;

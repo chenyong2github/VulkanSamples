@@ -287,9 +287,6 @@ timestamp_t get_milliseconds();
 // Main entry point of samples
 int sample_main(int argc, char *argv[]);
 
-// Start the main render loop
-void RenderLoop(struct sample_info &info, void(*pRenderFunc)(struct sample_info &info));
-
 #ifdef __ANDROID__
 // Android specific definitions & helpers.
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "VK-SAMPLE", __VA_ARGS__))
