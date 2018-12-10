@@ -11,10 +11,6 @@ public:
 	virtual void Render();
 	virtual void Destroy();
 
-#ifdef _WIN32
-	LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-#endif
-
 	void RenderLoop();
 
 private:
