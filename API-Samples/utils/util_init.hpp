@@ -118,9 +118,4 @@ void destroy_command_pool(struct sample_info &info);
 void destroy_device(struct sample_info &info);
 void destroy_instance(struct sample_info &info);
 void destroy_window(struct sample_info &info);
-
-
-// Start the main render loop
-void RenderLoop(struct sample_info &info);
-
 #endif // UTIL_INIT

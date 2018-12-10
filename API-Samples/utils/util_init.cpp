@@ -27,6 +27,7 @@ samples "init" utility functions
 #include <assert.h>
 #include <string.h>
 #include "util_init.hpp"
+#include "SampleBase.hpp"
 #include "cube_data.h"
 
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
@@ -413,50 +414,25 @@ void init_connection(struct sample_info &info) {
 #ifdef _WIN32
 static void run(struct sample_info *info) { /* Placeholder for samples that want to show dynamic content */ }
 
-extern void Render(struct sample_info &info);
 // MS-Windows event handling function:
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    struct sample_info *info = reinterpret_cast<struct sample_info *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    SampleBase* sampleBase = reinterpret_cast<SampleBase *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
     switch (uMsg) {
         case WM_CLOSE:
             PostQuitMessage(0);
             break;
         case WM_PAINT:
-			Render(*info);
-			ValidateRect(info->window, NULL);
+			if (sampleBase != NULL)
+			{
+				sampleBase->Render();
+				ValidateRect(sampleBase->info.window, NULL);
+			}			
             return 0;
         default:
             break;
     }
     return (DefWindowProc(hWnd, uMsg, wParam, lParam));
-}
-
-void RenderLoop(struct sample_info &info)
-{
-#if defined(_WIN32)
-	MSG msg;
-	while (true)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				break;
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-#elif defined(_DIRECT2DISPLAY)
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-#endif
-
-	// Flush device to make sure all resources can be freed
-	if (info.device != VK_NULL_HANDLE) {
-		vkDeviceWaitIdle(info.device);
-	}
 }
 
 void init_window(struct sample_info &info) {

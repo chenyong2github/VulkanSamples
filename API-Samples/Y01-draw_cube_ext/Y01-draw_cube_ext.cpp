@@ -28,6 +28,7 @@ Draw Cube
 #include <assert.h>
 #include <string.h>
 #include <cstdlib>
+#include "SampleBase.hpp"
 #include "cube_data.h"
 
 /* For this sample, we'll start with GLSL so the shader function is plain */
@@ -60,26 +61,33 @@ static const char *fragShaderText =
     "   outColor = color;\n"
     "}\n";
 
-void Init(struct sample_info &info);
-void Render(struct sample_info &info);
-void Destroy(struct sample_info &info);
+class Sample : public SampleBase
+{
+public:
+	Sample(struct sample_info& info);
+	~Sample();
 
-int sample_main(int argc, char *argv[]) {
-    struct sample_info info = {};
-	process_command_line_args(info, argc, argv);
+	void Init();
+	void Render();
+	void Destroy();
 
-	Init(info);
-	RenderLoop(info);
-	Destroy(info);
+private:
 
-    return 0;
+};
+
+Sample::Sample(struct sample_info& info) : SampleBase(info)
+{
 }
 
-void Init(struct sample_info & info)
+Sample::~Sample()
+{
+}
+
+void Sample::Init()
 {
 	char sample_title[] = "Draw Cube";
 	const bool depthPresent = true;
-	
+
 	init_global_layer_properties(info);
 	init_instance_extension_names(info);
 	init_device_extension_names(info);
@@ -87,7 +95,7 @@ void Init(struct sample_info & info)
 	init_enumerate_device(info);
 	init_window_size(info, 500, 500);
 	init_connection(info);
-	init_window(info);
+	init_window(info); SetWindowLongPtr(info.window, GWLP_USERDATA, (LONG_PTR)this);	
 	init_swapchain_extension(info);
 	init_device(info);
 
@@ -109,7 +117,7 @@ void Init(struct sample_info & info)
 	init_pipeline(info, depthPresent);
 }
 
-void Render(struct sample_info &info)
+void Sample::Render()
 {
 	VkResult U_ASSERT_ONLY res;
 
@@ -219,7 +227,7 @@ void Render(struct sample_info &info)
 	vkDestroyFence(info.device, drawFence, NULL);
 }
 
-void Destroy(struct sample_info & info)
+void Sample::Destroy()
 {
 	/* VULKAN_KEY_END */
 	if (info.save_images) write_ppm(info, "15-draw_cube");
@@ -240,4 +248,18 @@ void Destroy(struct sample_info & info)
 	destroy_device(info);
 	destroy_window(info);
 	destroy_instance(info);
+}
+
+int sample_main(int argc, char *argv[]) {
+    struct sample_info info = {};
+	process_command_line_args(info, argc, argv);
+
+	Sample* sample = new Sample(info);
+
+	sample->Init();
+	sample->RenderLoop();
+	sample->Destroy();
+
+	delete sample;
+    return 0;
 }
