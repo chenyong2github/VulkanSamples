@@ -24,6 +24,10 @@ public:
 	// Render one frame of a render loop on platforms that sync rendering
 	void renderFrame();
 
+#if defined(_WIN32)
+	void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+#endif 
+
 	Camera camera;
 	glm::vec3 rotation = glm::vec3();
 	glm::vec3 cameraPos = glm::vec3();

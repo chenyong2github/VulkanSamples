@@ -238,6 +238,18 @@ public:
 	{
 		VkResult U_ASSERT_ONLY res;
 
+//		info.View = glm::lookAt(
+//			glm::vec3(-5, 3, -10),
+//			cameraPos,
+//			glm::vec3(0, -1, 0)
+//		);
+
+		info.Model = glm::rotate(info.Model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		info.Model = glm::rotate(info.Model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		info.Model = glm::rotate(info.Model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		info.MVP = info.Clip * info.Projection * info.View * info.Model;
+
 		uint8_t *pData;
 		res = vkMapMemory(info.device, info.uniform_data.mem, 0, VK_WHOLE_SIZE, 0, (void **)&pData);
 		assert(res == VK_SUCCESS);
