@@ -423,12 +423,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             PostQuitMessage(0);
             break;
         case WM_PAINT:
-			if (sampleBase != NULL)
-			{
-				sampleBase->Render();
-				ValidateRect(sampleBase->info.window, NULL);
-			}			
-            return 0;
+			sampleBase->renderFrame();
+			ValidateRect(sampleBase->info.window, NULL);
+			break;
+		case WM_LBUTTONDOWN:
+			sampleBase->mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+			sampleBase->mouseButtons.left = true;
+			break;
+		case WM_RBUTTONDOWN:
+			sampleBase->mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+			sampleBase->mouseButtons.right = true;
+			break;
+		case WM_MBUTTONDOWN:
+			sampleBase->mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+			sampleBase->mouseButtons.middle = true;
+			break;
+		case WM_LBUTTONUP:
+			sampleBase->mouseButtons.left = false;
+			break;
+		case WM_RBUTTONUP:
+			sampleBase->mouseButtons.right = false;
+			break;
+		case WM_MBUTTONUP:
+			sampleBase->mouseButtons.middle = false;
+			break;
+		case WM_MOUSEWHEEL:
+		{			
+			short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+			sampleBase->zoom += (float)wheelDelta * 0.005f * sampleBase->zoomSpeed;
+			sampleBase->camera.translate(glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f * sampleBase->zoomSpeed));
+			sampleBase->viewUpdated = true;
+		}
+			break;
+		case WM_MOUSEMOVE:
+			sampleBase->handleMouseMove(LOWORD(lParam), HIWORD(lParam));
+			break;
         default:
             break;
     }
