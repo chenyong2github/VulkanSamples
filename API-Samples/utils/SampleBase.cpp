@@ -39,7 +39,7 @@ void SampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		camera.translate(glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f * zoomSpeed));
 		viewUpdated = true;
 	}
-	break;
+		break;
 	case WM_MOUSEMOVE:
 		handleMouseMove(LOWORD(lParam), HIWORD(lParam));
 		break;
@@ -56,7 +56,7 @@ void SampleBase::handleMouseMove(int32_t x, int32_t y)
 	if (mouseButtons.left) {
 		rotation.x += dy * 1.25f * rotationSpeed;
 		rotation.y -= dx * 1.25f * rotationSpeed;
-		camera.rotate(glm::vec3(dy * camera.rotationSpeed, -dx * camera.rotationSpeed, 0.0f));
+//		camera.rotate(glm::vec3(dy * camera.rotationSpeed, -dx * camera.rotationSpeed, 0.0f));
 		viewUpdated = true;
 	}
 	if (mouseButtons.right) {
