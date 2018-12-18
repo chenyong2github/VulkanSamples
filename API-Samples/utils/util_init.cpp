@@ -423,7 +423,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             PostQuitMessage(0);
             break;
         case WM_PAINT:
-			sampleBase->renderFrame();
 			ValidateRect(sampleBase->info.window, NULL);
 			break;
 		case WM_LBUTTONDOWN:

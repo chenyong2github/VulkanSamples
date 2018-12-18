@@ -236,7 +236,15 @@ public:
 
 	void updateUniformBuffers()
 	{
+		VkResult U_ASSERT_ONLY res;
 
+		uint8_t *pData;
+		res = vkMapMemory(info.device, info.uniform_data.mem, 0, VK_WHOLE_SIZE, 0, (void **)&pData);
+		assert(res == VK_SUCCESS);
+
+		memcpy(pData, &info.MVP, sizeof(info.MVP));
+
+		vkUnmapMemory(info.device, info.uniform_data.mem);
 	}
 
 	void viewChanged()

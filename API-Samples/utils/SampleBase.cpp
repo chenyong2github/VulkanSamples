@@ -1,3 +1,4 @@
+#include <iostream>
 #include "SampleBase.hpp"
 
 void SampleBase::renderFrame()
@@ -13,6 +14,9 @@ void SampleBase::renderFrame()
 	auto tEnd = std::chrono::high_resolution_clock::now();
 	auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
 	frameTimer = (float)tDiff / 1000.0f;
+
+	std::cout << "render deltaTime : " << frameTimer << std::endl;
+
 	camera.update(frameTimer);
 	if (camera.moving())
 	{
@@ -33,6 +37,10 @@ void SampleBase::renderLoop()
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+		}
+
+		if (!IsIconic(info.window)) {
+			renderFrame();
 		}
 	}
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
