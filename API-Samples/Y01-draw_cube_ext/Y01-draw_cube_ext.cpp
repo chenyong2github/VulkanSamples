@@ -66,9 +66,10 @@ class Sample : public SampleBase
 public:
 	Sample(struct sample_info& info) : SampleBase(info) 
 	{
-		zoom = -8.0f;
-		rotationSpeed = 0.01f;
-		viewUpdated = true;
+		camera.init(glm::vec3(0, 0, 8),
+			        glm::vec3(),
+			        0.5f,
+			        0.5f);
 	};
 
 	~Sample() {};
@@ -240,19 +241,16 @@ public:
 		destroy_instance(info);
 	}
 
+	void update(float deltaTime)
+	{
+		updateUniformBuffers();
+	}
+
 	void updateUniformBuffers()
 	{
 		VkResult U_ASSERT_ONLY res;
 
-		info.View = glm::lookAt(
-			glm::vec3(0, 0, -zoom),  
-			cameraPos,     
-			glm::vec3(0, 1, 0)     
-			);
-
-		info.Model = glm::rotate(info.Model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		info.Model = glm::rotate(info.Model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		info.Model = glm::rotate(info.Model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		info.View = camera.viewMat;
 
 		info.MVP = info.Clip * info.Projection * info.View * info.Model;
 
@@ -263,12 +261,6 @@ public:
 		memcpy(pData, &info.MVP, sizeof(info.MVP));
 
 		vkUnmapMemory(info.device, info.uniform_data.mem);
-	}
-
-	void viewChanged()
-	{
-		// This function is called by the base example class each time the view is changed by user input
-		updateUniformBuffers();
 	}
 
 private:

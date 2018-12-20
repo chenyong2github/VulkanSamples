@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+
 #include "SampleBase.hpp"
 
 void SampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -35,9 +37,8 @@ void SampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_MOUSEWHEEL:
 	{
 		short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		zoom += (float)wheelDelta * 0.005f * zoomSpeed;
-		camera.translate(glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f * zoomSpeed));
-		viewUpdated = true;
+		camera.zoom += (float)wheelDelta * 0.005f * camera.zoomSpeed;
+		camera.setZoom(camera.zoom);
 	}
 		break;
 	case WM_MOUSEMOVE:
@@ -54,22 +55,24 @@ void SampleBase::handleMouseMove(int32_t x, int32_t y)
 	int32_t dy = (int32_t)mousePos.y - y;
 
 	if (mouseButtons.left) {
-		rotation.x += dy * 1.25f * rotationSpeed;
-		rotation.y -= dx * 1.25f * rotationSpeed;
-//		camera.rotate(glm::vec3(dy * camera.rotationSpeed, -dx * camera.rotationSpeed, 0.0f));
-		viewUpdated = true;
+		glm::mat4 rotM = glm::mat4(1.0f);
+		rotM = glm::rotate(rotM, glm::radians(dy * camera.rotationSpeed), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(dx * camera.rotationSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		camera.setPosition((glm::vec3)(rotM * glm::vec4(camera.position, 1)));
 	}
 	if (mouseButtons.right) {
-		zoom += dy * .005f * zoomSpeed;
-		camera.translate(glm::vec3(-0.0f, 0.0f, dy * .005f * zoomSpeed));
-		viewUpdated = true;
+		camera.zoom += dy * .005f * camera.zoomSpeed;
+
+		camera.setZoom(camera.zoom);
 	}
 	if (mouseButtons.middle) {
-		cameraPos.x -= dx * 0.01f;
-		cameraPos.y -= dy * 0.01f;
-		camera.translate(glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f));
-		viewUpdated = true;
+		camera.lookat.x -= dx * 0.01f;
+		camera.lookat.y -= dy * 0.01f;
+
+		camera.setLookat(camera.lookat);
 	}
+
 	mousePos = glm::vec2((float)x, (float)y);
 }
 
@@ -104,19 +107,19 @@ void SampleBase::renderLoop()
 	}
 }
 
+auto _lastTime = std::chrono::high_resolution_clock::now();
 void SampleBase::renderFrame()
 {
-	auto tStart = std::chrono::high_resolution_clock::now();
-	if (viewUpdated)
-	{
-		viewUpdated = false;
-		viewChanged();
-	}
+	auto time = std::chrono::high_resolution_clock::now();
+	auto tDiff = std::chrono::duration<double, std::milli>(time - _lastTime).count();
+	float deltaTime = (float)tDiff / 1000.0f;
+	_lastTime = time;
+
+//	std::cout << deltaTime << std::endl;
+
+	update(deltaTime);
 
 	render();
-	auto tEnd = std::chrono::high_resolution_clock::now();
-	auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
-	frameTimer = (float)tDiff / 1000.0f;
 
-	//	std::cout << "render deltaTime : " << frameTimer << std::endl;
+
 }
