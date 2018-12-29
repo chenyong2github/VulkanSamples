@@ -262,7 +262,7 @@ set (S_TARGETS
     occlusion_query pipeline_cache pipeline_derivative push_descriptors
     immutable_sampler push_constants draw_subpasses secondary_command_buffer
     spirv_assembly spirv_specialization memory_barriers validation_cache vulkan_1_1_flexible
-	Y01-draw_cube_ext)
+	Y01-draw_cube_ext Y02-textured_cube_ext)
 sampleWithSingleFile()
 
 if (NOT ANDROID)
